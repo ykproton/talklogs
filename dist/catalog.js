@@ -1,6 +1,7 @@
 const sessions=[
 {
   "id": "2026-11-21",
+  "videoUrl": "https://b23.tv/qoVHjDp",
   "date": "2026-11-21",
   "title": "接着上次直播聊：分享渡友关注的问题",
   "hosts": "纽约金冰 · 主持吉米",
