@@ -60,7 +60,7 @@ function hero(s,front=false) {
   const byline=room?'<div class="eventMeta"><span>'+date(s)+(s.timeLabel?' · '+esc(s.timeLabel):'')+(s.venue?' · '+esc(s.venue):'')+'</span><span>'+esc(s.hosts)+'</span></div>':'';
   return '<section class="hero'+(room?' roomHero':'')+'"><div>'+label+'<'+(front?'h2':'h1')+'>'+esc(s.title)+'</'+(front?'h2':'h1')+'>'+byline+
     '<p>'+esc(s.desc)+'</p><div class="heroActions">'+readingButton(s,front)+
-    (front?'<a class="contentsLink" href="'+home(s)+'">本场目录</a>':'')+'</div><div class="heroTools"><a href="'+study(s,1)+'">交流内容分析</a><a href="'+study(s,2)+'">投资主题</a><a href="'+home(s)+'/originals">原稿下载 ↓</a></div></div>'+fullPoster(s)+'</section>';
+    (front?'<a class="contentsLink" href="'+home(s)+'">本场目录</a>':'')+'</div><div class="heroTools"><a href="'+study(s,1)+'">交流内容分析</a><a href="'+study(s,2)+'">投资分析专题</a><a href="'+home(s)+'/originals">原稿下载 ↓</a></div></div>'+fullPoster(s)+'</section>';
 }
 function archiveRow(s) {
   return '<a class="archiveRow" href="'+home(s)+'">'+posterImage(s,'',true)+'<div><small>'+issueLabel(s)+'　·　'+date(s)+(s.series?'':'　·　'+esc(s.hosts))+'</small><h3>'+esc(s.title)+'</h3><p>'+esc(s.desc)+'</p></div><span class="count">'+s.topics.length+' 个主题　›</span></a>';

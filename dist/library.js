@@ -1,4 +1,4 @@
-const docNames=['直播对话稿','交流内容分析','投资主题'];
+const docNames=['直播对话稿','交流内容分析','投资分析专题'];
 const fileKeys=['dialogue','analysis','investment'];
 const order=s=>s.topics.map((_,i)=>i);
 const slug=(s,n)=>s.topics[n].key;
