@@ -1,3 +1,7 @@
+const assetVersions = JSON.parse(document.getElementById('asset-versions')?.textContent || '{}');
+function assetUrl(path) {
+ return assetVersions[path] ? path + '?v=' + assetVersions[path] : path;
+}
 const docNames=['直播对话稿','交流内容分析','投资分析专题'];
 const fileKeys=['dialogue','analysis','investment'];
 const order=s=>s.topics.map((_,i)=>i);
@@ -6,13 +10,13 @@ const study=(s,d)=>home(s)+'/study/'+fileKeys[d];
 function original(s,d) {
  const format=s.originalFormat||'docx';
  const name=(s.series?seriesLabel(s)+'第'+issueNumber(s)+'期_'+s.title:s.id)+'_'+docNames[d]+'.'+format;
- return '<a download="'+esc(name)+'" href="originals/'+s.id+'/'+fileKeys[d]+'.'+format+'">'+docNames[d]+' <small>'+(d?'AI 生成 · ':'直播整理 · ')+(format==='md'?'Markdown':'Word')+' ↓</small></a>';
+ return '<a download="'+esc(name)+'" href="'+assetUrl('originals/'+s.id+'/'+fileKeys[d]+'.'+format)+'">'+docNames[d]+' <small>'+(d?'AI 生成 · ':'直播整理 · ')+(format==='md'?'Markdown':'Word')+' ↓</small></a>';
 }
 function resources(s){return '<section class="resources"><h2>本场资料</h2><div class="studies">'+[1,2].map(d=>'<a href="'+study(s,d)+'">'+docNames[d]+' <span>阅读全文 →</span></a>').join('')+'</div><details><summary>原始文档下载 · 3 份</summary><div class="downloads">'+docNames.map((_,d)=>original(s,d)).join('')+'</div></details></section>'}
 function docBlock(block,id,isQuote=false){if(isQuote && typeof block==='string')return '<blockquote id="'+id+'" data-position>'+esc(block)+'</blockquote>';if(typeof block==='string')return '<p id="'+id+'" data-position>'+esc(block)+'</p>';return '<div class="tableWrap" id="'+id+'" data-position><table>'+block.map((row,i)=>'<tr>'+row.map(x=>i?'<td>'+esc(x)+'</td>':'<th scope="col">'+esc(x)+'</th>').join('')+'</tr>').join('')+'</table></div>'}
 const fileCache=new Map();
 function content(s,key){
- const url='content/'+s.id+'/'+key+'.json';
+ const url=assetUrl('content/'+s.id+'/'+key+'.json');
  if(!fileCache.has(url))fileCache.set(url,fetch(url).then(r=>{if(!r.ok)throw Error(r.status);return r.json()}).catch(err=>{fileCache.delete(url);throw err}));
  return fileCache.get(url)
 }
@@ -57,7 +61,7 @@ document.addEventListener('click',event=>{
  link.hash=link.hash.split('?')[0]+consultParams(origin)
 });
 async function searchIndex(s,scope){
- const url='content/'+s.id+'/search-'+scope+'.gz';
+ const url=assetUrl('content/'+s.id+'/search-'+scope+'.gz');
  if(!fileCache.has(url))fileCache.set(url,(async()=>{
   if(typeof DecompressionStream==='function'){const response=await fetch(url);if(!response.ok)throw Error(response.status);
    const bytes=new Uint8Array(await response.arrayBuffer());if(bytes[0]!==31)return JSON.parse(new TextDecoder().decode(bytes));

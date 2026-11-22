@@ -11,3 +11,4 @@ for(const session of sessions){
   await writeFile(new URL('search-'+scope+'.gz',dir),gzipSync(Buffer.from(JSON.stringify(groups))));
  }
 }
+await import('./version-assets.mjs');

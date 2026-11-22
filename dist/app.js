@@ -11,7 +11,7 @@ const main = document.querySelector('main');
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const home = s => '#live/' + s.id;
 const page = (s,n) => home(s) + '/topic/' + slug(s,n);
-const poster = s => 'posters/' + s.id + '.jpg';
+const poster = s => assetUrl('posters/' + s.id + '.jpg');
 const date = s => airdate(s).replaceAll('-','.');
 const issueNumber = s => String(s.issue).padStart(3,'0');
 const seriesRoute = key => '#series/' + key;
@@ -39,7 +39,7 @@ function updateNavigation(parts,s) {
 }
 function posterImage(s, alt, small=false) {
   const src=poster(s);
-  const variants=s.posterWidths?.map(w=>'posters/'+s.id+'-'+w+'.webp '+w+'w').join(', ');
+  const variants=s.posterWidths?.map(w=>assetUrl('posters/'+s.id+'-'+w+'.webp')+' '+w+'w').join(', ');
   return '<img src="'+src+'" alt="'+esc(alt)+'"'+(small?' loading="lazy"':'')+
     (variants?' srcset="'+variants+'" sizes="'+(small?'56px':'(max-width: 720px) 26vw, 204px')+'" width="865" height="1536"':'')+'>';
 }
