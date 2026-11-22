@@ -1,6 +1,7 @@
 const sessions=[
 {
   "id": "2026-11-21",
+  "readingTitle": "年轻人该不该全仓白酒？AI 时代，孩子该学什么？",
   "videoUrl": "https://b23.tv/qoVHjDp",
   "date": "2026-11-21",
   "title": "接着上次直播聊：分享渡友关注的问题",
@@ -9,7 +10,7 @@ const sessions=[
   "timeLabel": "海报预告 20:30",
   "desc": "从灵魂与感知谈到婚姻、人生意义和 AI 时代的教育；投资讨论聚焦白酒窄基、性格风险与价值估算的边界。",
   "sourceNote": "海报预告为 2026 年 11 月 21 日 20:30；直播对话稿记录 21:02 起，时长约 2 小时 31 分钟。时间信息分别源自海报与文字稿。文字稿为根据直播整理的版本，分析为 AI 独立生成，均非节目官方发布。",
-  "picks": ["soul-and-perception", "ai-education", "valuation-margin"],
+  "picks": ["young-investor", "ai-education", "valuation-margin"],
   "originalFormat": "md",
   "headings": [
     [

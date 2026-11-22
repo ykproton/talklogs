@@ -96,3 +96,13 @@ nav a { display: inline-flex; align-items: center; min-height: 44px; white-space
 .posterVideo {display:inline-flex;align-items:center;justify-content:center;min-height:40px;font-size:13px;color:inherit;text-decoration:underline;text-underline-offset:4px}
 .hero .posterVideo:hover {color:inherit}
 @media(max-width:500px){.roomHero .posterGroup,.roomFeature .posterGroup{grid-area:1 / 2 / span 3;align-self:center}.roomHero .posterGroup .poster,.roomFeature .posterGroup .poster{grid-area:auto}}
+
+.textAction{border:0;background:none;color:var(--link);font:inherit;cursor:pointer;padding:7px 0;text-align:start}
+.hero .textAction{color:inherit;font-size:.9rem;text-decoration:underline;text-underline-offset:4px}
+.readTools .textAction{padding:8px;font-size:.9rem}
+.speechBreak{display:block;height:.75em}
+.subchapters{margin:0 0 .7rem 1rem;border-inline-start:2px solid var(--line);padding-inline-start:.8rem}
+.subchapters summary{font-size:.9rem;color:var(--sub);cursor:pointer}
+.studySection h3{font-size:1.15rem;line-height:1.5}
+.read [data-position]{scroll-margin-top:5.5rem}
+@media(max-width:720px){.readbar{gap:.6rem;flex-wrap:wrap}.readbar label{min-width:0;flex:1}.readbar select{max-width:100%}.readbar .textAction{font-size:.875rem}}
