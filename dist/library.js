@@ -4,7 +4,17 @@ function assetUrl(path) {
 }
 const docNames=['直播对话稿','交流内容分析','投资分析专题'];
 const fileKeys=['dialogue','analysis','investment'];
-const order=s=>s.topics.map((_,i)=>i);
+const isAppendix = topic => topic.key === 'show-notes';
+function topicCount(s) {
+ const supplements = s.topics.filter(isAppendix).length;
+ return (s.topics.length-supplements)+' 个主题'+(supplements?' · '+supplements+' 份附录':'');
+}
+function readerMenu(items, s, current, appendix=false){
+ return items.map((topic,i)=>'<option value="'+home(s)+'/topic/'+topic.key+'" '+(topic===current?'selected':'')+'>'+ (appendix?'附录':(i+1)+' / '+items.length)+'　'+esc(topic.title)+'</option>').join('');
+}
+function readingTools(links){
+ return '<details class="readTools"><summary>更多</summary><div><button class="textAction" data-share>复制段落链接</button>'+links+'</div></details>';
+}
 const slug=(s,n)=>s.topics[n].key;
 const study=(s,d)=>home(s)+'/study/'+fileKeys[d];
 function original(s,d) {
@@ -33,10 +43,10 @@ function chapterMenu(sections,route,tail){
 }
 function studyPage(s,d,sections){
  const route=study(s,d),tail=consultParams();
- return '<article class="read"><div class="readbar"><a href="'+home(s)+'">‹ 本场直播</a><button data-share class="textAction">分享位置</button>'+original(s,d)+'</div><small>'+issueContext(s)+'　·　'+s.title+'</small><h1>'+docNames[d]+'</h1><p class="credit">非官方 · 本篇作'+ (d===2?'为投资分析':'为直播分析')+'，由 AI 根据直播整理稿生成。</p><details class="chapterList"><summary>文内目录</summary>'+chapterMenu(sections,route,tail)+'</details>'+sections.map((sec,j)=>{
+ return '<article class="read"><div class="readbar"><a href="'+home(s)+'">‹ 本场目录</a>'+readingTools(original(s,d))+'</div><small>'+issueContext(s)+'　·　'+s.title+'</small><h1>'+docNames[d]+'</h1><p class="credit">非官方 · 本篇作'+ (d===2?'为投资分析':'为直播分析')+'，由 AI 根据直播整理稿生成。</p><details class="chapterList"><summary>文内目录</summary>'+chapterMenu(sections,route,tail)+'</details>'+sections.map((sec,j)=>{
  let ref='';if(sec.source){const {key,anchor,title}=sec.source;ref='<a class="sourceQuote" href="'+home(s)+'/topic/'+key+'/'+anchor+tail+'">对照直播原话 · '+esc(title)+' →</a>'}
  return '<section class="studySection"><'+(subchapter(sec.title)?'h3':'h2')+' data-position id="h'+j+'">'+esc(sec.title)+'</'+(subchapter(sec.title)?'h3':'h2')+'>'+ref+sec.blocks.map((b,k)=>docBlock(b,'d'+j+'-'+k,sec.quotes?.includes(k))).join('')+'</section>'
- }).join('')+'<a class="quiet" href="'+home(s)+'">← 返回本场直播</a></article>'
+ }).join('')+'<a class="quiet" href="'+esc(returnTo||home(s))+'">← '+(returnTo?'返回刚才的对话':'本场目录')+'</a></article>'
 }
 function paragraphs(s,n){return s.dialogue[s.topics[n].key].pars.map(([id,text])=>{
  const pattern=s.id==='2026-11-21'?/^(吉米|金先生|金冰|主持人|听众)：([\s\S]*)$/:/^([^：]{1,14})：([\s\S]*)$/;const m=text.match(pattern);let name=m?.[1]||'';
@@ -63,7 +73,7 @@ document.addEventListener('click',async event=>{
  if(!button||!activeReading)return;
  const {nodes,route}=activeReading;
  const anchor=nodes.find(node=>node.getBoundingClientRect().bottom>95)?.id || nodes.at(-1)?.id;
- const url=new URL(location.href);url.hash=route+(anchor?'/'+anchor:'');
+ const url=new URL(location.href);url.searchParams.delete('v');url.hash=route+(anchor?'/'+anchor:'');
  try{await navigator.clipboard.writeText(url.href);button.textContent='链接已复制'}
  catch{window.prompt('复制段落链接',url.href)}
 });
@@ -79,8 +89,8 @@ window.addEventListener('pagehide',savePlace);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)savePlace()});
 document.addEventListener('click',event=>{
  const link=event.target.closest('a[data-consult]');if(!link||!activeReading)return;
- const record=get('jr-pos:'+activeReading.route,null);
- const origin=returnTo||activeReading.route+(record?.anchor?'/'+record.anchor:'');
+ const anchor=activeReading.nodes.find(node=>node.getBoundingClientRect().bottom>95)?.id || activeReading.nodes.at(-1)?.id;
+ const origin=activeReading.route+(anchor?'/'+anchor:'');
  link.hash=link.hash.split('?')[0]+consultParams(origin)
 });
 async function searchIndex(s,scope){
