@@ -48,18 +48,19 @@ function fullPoster(s) {
   if (!s.videoUrl) return imageLink;
   return '<div class="posterGroup">'+imageLink+'<a class="posterVideo" href="'+esc(s.videoUrl)+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc('在哔哩哔哩观看《'+s.title+'》直播录像')+'">观看录像 ↗</a></div>';
 }
-function readingButton(s,front=false) {
-  const mark=episodeMemory(s);
-  const route=mark?mark.route+(mark.anchor?'/'+mark.anchor:''):page(s,0);
-  const label=mark?'继续阅读':'开始阅读';
-  return '<a class="pill" href="'+esc(route)+'"'+(mark?' aria-label="'+esc('继续阅读 · '+mark.title)+'"':'')+'>'+esc(mark && front ? label+' · '+mark.title : label)+' <span aria-hidden="true">→</span></a>';
+function readingButton(s) {
+  const mark = episodeMemory(s);
+  const route = mark ? mark.route + (mark.anchor ? '/' + mark.anchor : '') : page(s,0);
+  const title = mark && s.topics.find(topic => topic.key === mark.route.split('/')[3]).title;
+  const label = mark ? '继续阅读 · ' + title : '开始阅读';
+  return '<a class="pill" href="'+esc(route)+'"><span>'+esc(label)+'</span> <span aria-hidden="true">→</span></a>';
 }
 function hero(s,front=false) {
   const room=seriesInfo[s.series];
   let label=room?'<div class="issueLine"><a href="'+seriesRoute(s.series)+'">'+room.title+'</a><span>第 '+issueNumber(s)+' 期</span></div>':'<small>'+date(s)+'　·　'+s.hosts+'</small>';
   const byline=room?'<div class="eventMeta"><span>'+date(s)+(s.timeLabel?' · '+esc(s.timeLabel):'')+(s.venue?' · '+esc(s.venue):'')+'</span><span>'+esc(s.hosts)+'</span></div>':'';
   return '<section class="hero'+(room?' roomHero':'')+'"><div>'+label+'<'+(front?'h2':'h1')+'>'+esc(front && s.readingTitle ? s.readingTitle : s.title)+'</'+(front?'h2':'h1')+'>'+(front && s.readingTitle?'<small>原节目 · '+esc(s.title)+'</small>':'')+byline+
-    '<p>'+esc(s.desc)+'</p><div class="heroActions">'+readingButton(s,front)+
+    '<p>'+esc(s.desc)+'</p><div class="heroActions">'+readingButton(s)+
     (front?'<a class="contentsLink" href="'+home(s)+'">本场目录</a>':'')+'</div>'+(front?'':'<button type="button" class="textAction" id="jumpResources">本场资料</button>')+'</div>'+fullPoster(s)+'</section>';
 }
 function archiveRow(s) {
