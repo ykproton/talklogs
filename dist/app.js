@@ -61,7 +61,7 @@ function hero(s,front=false) {
   const byline=room?'<div class="eventMeta"><span>'+date(s)+(s.timeLabel?' · '+esc(s.timeLabel):'')+(s.venue?' · '+esc(s.venue):'')+'</span><span>'+esc(s.hosts)+'</span></div>':'';
   return '<section class="hero'+(room?' roomHero':'')+'"><div>'+label+'<'+(front?'h2':'h1')+'>'+esc(front && s.readingTitle ? s.readingTitle : s.title)+'</'+(front?'h2':'h1')+'>'+(front && s.readingTitle?'<small>原节目 · '+esc(s.title)+'</small>':'')+byline+
     '<p>'+esc(s.desc)+'</p><div class="heroActions">'+readingButton(s)+
-    (front?'<a class="contentsLink" href="'+home(s)+'">本场目录</a>':'')+'</div>'+(front?'':'<button type="button" class="textAction" id="jumpResources">本场资料</button>')+'</div>'+fullPoster(s)+'</section>';
+    (front?'<a class="contentsLink" href="'+home(s)+'">本场目录</a>':'<button type="button" class="contentsLink resourceJump" id="jumpResources">本场资料</button>')+'</div></div>'+fullPoster(s)+'</section>';
 }
 function archiveRow(s) {
   return '<a class="archiveRow" href="'+home(s)+'">'+posterImage(s,'',true)+'<div><small>'+issueLabel(s)+'　·　'+date(s)+(s.series?'':'　·　'+esc(s.hosts))+'</small><h3>'+esc(s.title)+'</h3><p>'+esc(s.desc)+'</p></div><span class="count">'+topicCount(s)+'　›</span></a>';

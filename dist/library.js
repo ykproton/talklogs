@@ -23,7 +23,32 @@ function original(s,d) {
  return '<a download="'+esc(name)+'" href="'+assetUrl('originals/'+s.id+'/'+fileKeys[d]+'.'+format)+'">'+docNames[d]+' <small>'+(d?'AI 生成 · ':'直播整理 · ')+(format==='md'?'Markdown':'Word')+' ↓</small></a>';
 }
 function resources(s){return '<section class="resources"><h2>本场资料</h2><div class="studies">'+[1,2].map(d=>'<a href="'+study(s,d)+'">'+docNames[d]+' <span>阅读全文 →</span></a>').join('')+'</div><details><summary>原始文档下载 · 3 份</summary><div class="downloads">'+docNames.map((_,d)=>original(s,d)).join('')+'</div></details></section>'}
-function docBlock(block,id,isQuote=false){if(isQuote && typeof block==='string')return '<blockquote id="'+id+'" data-position>'+esc(block)+'</blockquote>';if(typeof block==='string')return '<p id="'+id+'" data-position>'+esc(block)+'</p>';return '<div class="tableWrap" id="'+id+'" data-position><table>'+block.map((row,i)=>'<tr>'+row.map(x=>i?'<td>'+esc(x)+'</td>':'<th scope="col">'+esc(x)+'</th>').join('')+'</tr>').join('')+'</table></div>'}
+function inlineStudyText(text) {
+ return esc(text).replace(/\\\(([A-Za-z])\\\)/g,'<var>$1</var>');
+}
+function studyBlocks(section,j) {
+ const html=[];
+ const blocks=section.blocks;
+ for(let i=0;i<blocks.length;i++){
+  const first=i;
+  let expr, end=i;
+  if(typeof blocks[i]==='string'){
+   if(blocks[i].trim()==='\\['){
+    for(let k=i+1;k<blocks.length && typeof blocks[k]==='string';k++){
+     if(blocks[k].trim()==='\\]'){end=k;expr=blocks.slice(i+1,k).join('\n').trim();break}
+    }
+   }else expr=blocks[i].trim().match(/^\\\[([\s\S]+?)\\\]$/)?.[1].trim();
+  }
+  if(expr && Object.hasOwn(displayMath,expr)){
+   const ids=blocks.slice(first,end+1).map((_,k)=>'d'+j+'-'+(first+k));
+   const aliases=ids.slice(1).map(id=>'<span class="formulaAnchor" data-position id="'+id+'"></span>').join('');
+   html.push('<div class="equation" data-position id="'+ids[0]+'">'+aliases+displayMath[expr]+'</div>');
+   i=end;
+  }else html.push(docBlock(blocks[i],'d'+j+'-'+i,section.quotes?.includes(i)));
+ }
+ return html.join('');
+}
+function docBlock(block,id,isQuote=false){if(isQuote && typeof block==='string')return '<blockquote id="'+id+'" data-position>'+esc(block)+'</blockquote>';if(typeof block==='string')return '<p id="'+id+'" data-position>'+inlineStudyText(block)+'</p>';return '<div class="tableWrap" id="'+id+'" data-position><table>'+block.map((row,i)=>'<tr>'+row.map(x=>i?'<td>'+esc(x)+'</td>':'<th scope="col">'+esc(x)+'</th>').join('')+'</tr>').join('')+'</table></div>'}
 const fileCache=new Map();
 function content(s,key){
  const url=assetUrl('content/'+s.id+'/'+key+'.json');
@@ -45,7 +70,7 @@ function studyPage(s,d,sections){
  const route=study(s,d),tail=consultParams();
  return '<article class="read"><div class="readbar"><a href="'+home(s)+'">‹ 本场目录</a>'+readingTools(original(s,d))+'</div><small>'+issueContext(s)+'　·　'+s.title+'</small><h1>'+docNames[d]+'</h1><p class="credit">非官方 · 本篇作'+ (d===2?'为投资分析':'为直播分析')+'，由 AI 根据直播整理稿生成。</p><details class="chapterList"><summary>文内目录</summary>'+chapterMenu(sections,route,tail)+'</details>'+sections.map((sec,j)=>{
  let ref='';if(sec.source){const {key,anchor,title}=sec.source;ref='<a class="sourceQuote" href="'+home(s)+'/topic/'+key+'/'+anchor+tail+'">对照直播原话 · '+esc(title)+' →</a>'}
- return '<section class="studySection"><'+(subchapter(sec.title)?'h3':'h2')+' data-position id="h'+j+'">'+esc(sec.title)+'</'+(subchapter(sec.title)?'h3':'h2')+'>'+ref+sec.blocks.map((b,k)=>docBlock(b,'d'+j+'-'+k,sec.quotes?.includes(k))).join('')+'</section>'
+ return '<section class="studySection"><'+(subchapter(sec.title)?'h3':'h2')+' data-position id="h'+j+'">'+esc(sec.title)+'</'+(subchapter(sec.title)?'h3':'h2')+'>'+ref+studyBlocks(sec,j)+'</section>'
  }).join('')+'<a class="quiet" href="'+esc(returnTo||home(s))+'">← '+(returnTo?'返回刚才的对话':'本场目录')+'</a></article>'
 }
 function paragraphs(s,n){return s.dialogue[s.topics[n].key].pars.map(([id,text])=>{
