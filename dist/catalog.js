@@ -1,6 +1,7 @@
 const sessions=[
 {
   "id": "wuliaoshi-002",
+  "videoUrl": "https://www.bilibili.com/video/BV1N717z9Et5?vd_source=4c457d5d0587397ee6362b0f1f788a6e",
   "date": "2026-11-25",
   "series": "wuliaoshi",
   "issue": 2,
